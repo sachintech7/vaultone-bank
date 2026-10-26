@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VaultOne Bank | Banking with hidden-in-plain-sight security</title>
+  <meta name="description" content="VaultOne Bank demo: AES-256 encryption combined with image steganography to protect confidential data.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a href="#" class="logo"><span class="logo-mark">V</span> VaultOne</a>
+      <nav>
+        <a href="#services">Services</a>
+        <a href="#securevault">SecureVault</a>
+        <a href="#how">How it works</a>
+        <a href="#security">Security</a>
+        <a href="#contact" class="btn small">Open account</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <p class="eyebrow">Secure by design</p>
+          <h1>Banking where your sensitive data can <em>disappear</em> into plain sight.</h1>
+          <p class="lead">VaultOne protects confidential information with AES-256 encryption, then hides it inside ordinary images using steganography. Two layers. Zero obvious clues.</p>
+          <div class="cta">
+            <a href="#securevault" class="btn">Try SecureVault</a>
+            <a href="#services" class="btn ghost">Explore services</a>
+          </div>
+        </div>
+        <div class="card-visual" aria-hidden="true">
+          <div class="bank-card">
+            <div class="chip"></div>
+            <p class="num">4821 •••• •••• 0097</p>
+            <div class="row"><span>SACHIN R.</span><span>09/29</span></div>
+          </div>
+          <div class="balance">
+            <small>Available balance</small>
+            <strong>₹ 2,48,350.00</strong>
+            <span class="up">▲ 4.2% this month</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats">
+      <div class="wrap stats-grid">
+        <div><strong>256-bit</strong><span>AES-GCM encryption</span></div>
+        <div><strong>100%</strong><span>Recovery in tested cases</span></div>
+        <div><strong>0</strong><span>Data sent to any server</span></div>
+        <div><strong>24/7</strong><span>Account access</span></div>
+      </div>
+    </section>
+
+    <section id="services" class="section">
+      <div class="wrap">
+        <h2>Everything you expect from a bank</h2>
+        <p class="sub">Simple products, wrapped in serious security.</p>
+        <div class="grid3">
+          <article class="tile"><div class="ico">💳</div><h3>Savings &amp; Current</h3><p>Zero-fee digital accounts with instant UPI, NEFT and IMPS transfers.</p></article>
+          <article class="tile"><div class="ico">🏠</div><h3>Loans</h3><p>Home, education and personal loans with transparent rates and quick approvals.</p></article>
+          <article class="tile"><div class="ico">📈</div><h3>Invest</h3><p>Fixed deposits, mutual funds and recurring deposits from a single dashboard.</p></article>
+          <article class="tile"><div class="ico">🛡️</div><h3>SecureVault</h3><p>Encrypt a message and hide it inside an image. Share it safely, anywhere.</p></article>
+          <article class="tile"><div class="ico">📱</div><h3>Mobile Banking</h3><p>Biometric login, instant alerts and card controls in your pocket.</p></article>
+          <article class="tile"><div class="ico">🤝</div><h3>Support</h3><p>Real people, available around the clock for disputes and questions.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="securevault" class="section alt">
+      <div class="wrap">
+        <h2>SecureVault <span class="tag">Live demo</span></h2>
+        <p class="sub">Encrypt with AES-256-GCM, then embed the result into an image's pixels (LSB steganography). Everything runs in your browser. Nothing is uploaded.</p>
+
+        <div class="tabs" role="tablist">
+          <button class="tab active" data-tab="hide" role="tab">Hide a message</button>
+          <button class="tab" data-tab="reveal" role="tab">Reveal a message</button>
+        </div>
+
+        <div class="panel" id="panel-hide">
+          <div class="form">
+            <label>Cover image (PNG or JPG)
+              <input type="file" id="hideImg" accept="image/*">
+            </label>
+            <label>Secret message
+              <textarea id="secretText" rows="4" placeholder="Account PIN, notes, anything confidential..."></textarea>
+            </label>
+            <label>Password
+              <input type="password" id="hidePass" placeholder="Choose a strong password" autocomplete="new-password">
+            </label>
+            <button class="btn" id="hideBtn">Encrypt &amp; hide</button>
+            <p class="status" id="hideStatus"></p>
+          </div>
+          <div class="preview">
+            <canvas id="hideCanvas" width="10" height="10"></canvas>
+            <a id="downloadLink" class="btn ghost hidden" download="vaultone-secure.png">Download secure image (PNG)</a>
+            <p class="note">Always share the PNG. JPEG compression would destroy the hidden data.</p>
+          </div>
+        </div>
+
+        <div class="panel hidden" id="panel-reveal">
+          <div class="form">
+            <label>Secure image (PNG from SecureVault)
+              <input type="file" id="revealImg" accept="image/png">
+            </label>
+            <label>Password
+              <input type="password" id="revealPass" placeholder="Enter the password" autocomplete="off">
+            </label>
+            <button class="btn" id="revealBtn">Extract &amp; decrypt</button>
+            <p class="status" id="revealStatus"></p>
+          </div>
+          <div class="preview">
+            <canvas id="revealCanvas" width="10" height="10"></canvas>
+            <div class="output hidden" id="revealOut"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="how" class="section">
+      <div class="wrap">
+        <h2>How SecureVault works</h2>
+        <div class="steps">
+          <div class="step"><span>1</span><h3>Derive a key</h3><p>Your password is stretched with PBKDF2 (150,000 rounds, random salt) into a 256-bit key.</p></div>
+          <div class="step"><span>2</span><h3>Encrypt</h3><p>The message is sealed with AES-GCM and a random IV, so tampering is detected on decryption.</p></div>
+          <div class="step"><span>3</span><h3>Embed</h3><p>Ciphertext bits replace the least significant bit of each pixel's colour channels. The image looks unchanged.</p></div>
+          <div class="step"><span>4</span><h3>Extract &amp; decrypt</h3><p>The receiver reads the bits back, then decrypts with the same password to recover the exact message.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="security" class="section alt">
+      <div class="wrap">
+        <h2>Security you can reason about</h2>
+        <div class="grid3">
+          <article class="tile"><h3>Layered protection</h3><p>Encryption protects the content. Steganography hides that a message exists at all.</p></article>
+          <article class="tile"><h3>Reliable recovery</h3><p>Encrypt and decrypt workflows verified across tested cases with 100% data recovery.</p></article>
+          <article class="tile"><h3>Client-side only</h3><p>All processing happens locally in your browser using the Web Crypto API.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section cta-band">
+      <div class="wrap">
+        <h2>Ready to bank smarter?</h2>
+        <p class="sub light">Open a VaultOne account in minutes.</p>
+        <form class="signup" onsubmit="event.preventDefault(); this.querySelector('button').textContent='Thanks! (demo only)';">
+          <input type="text" placeholder="Full name" required>
+          <input type="email" placeholder="Email address" required>
+          <button class="btn light" type="submit">Get started</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p><strong>VaultOne Bank</strong> is a fictional brand created as a portfolio project: Secure Data Hiding using AES Encryption and Image Steganography (Python, OpenCV). Not a real financial institution. Do not enter real banking details.</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
